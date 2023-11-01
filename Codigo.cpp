@@ -41,8 +41,20 @@ int main() {
 			arqE >> virgula;  // Leitura da vírgula
 			arqE.get(Paciente[i].patologia, 30, ',');
 			arqE.ignore();  // Ignora a vírgula após o último campo
-}
-        IMPRIMIR(Paciente, 30);
+        }
+    int escolha;
+    cout << "ESCOLHA O QUE DESEJA FAZER:" << endl << 
+            "[1] IMPRIMIR FICHA DOS PACIENTES" << endl <<
+            "[0] FECHAR O PROGRAMA" << endl;
+    cin >> escolha;
+    switch(escolha){
+        case 1:
+            IMPRIMIR(Paciente, 30);
+            break;
+        case 0:
+            return 0;
+            break;
+        }
     }
 
     return 0;
