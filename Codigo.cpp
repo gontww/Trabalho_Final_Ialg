@@ -5,7 +5,7 @@
 
 using namespace std;
 
-struct FichaHosp {
+struct FichaHosp {	//CRIA O REGISTRO
     char nome[30];
     char genero;
     float altura;
@@ -13,7 +13,7 @@ struct FichaHosp {
     char patologia[30];
 };
 
-void IMPRIMIR(FichaHosp pacientes[], int tamanho) { //FUNÇÃO PARA IMPRIMIR
+void IMPRIMIR(FichaHosp pacientes[], int tamanho) {	//FUNÇÃO PARA IMPRIMIR
     for (int i = 0; i < tamanho; i++) {
         cout << pacientes[i].nome << " " << pacientes[i].genero << " " << pacientes[i].peso << "kg " << pacientes[i].altura << "m " << pacientes[i].patologia << endl << endl;
     }
@@ -21,9 +21,10 @@ void IMPRIMIR(FichaHosp pacientes[], int tamanho) { //FUNÇÃO PARA IMPRIMIR
 
 int main() {
     cout << fixed;
-    cout << setprecision(2);
+    cout << setprecision(2);	//LIMITA 2 DIGITOS DEPOIS DA VIRGULA
     ifstream arqE("registro.csv");
-    if (not arqE) {
+    
+    if (not arqE) {	//VERIFICAÇÃO DE ABERTURA
         cout << "Erro na leitura do arquivo";
     }
     else {
