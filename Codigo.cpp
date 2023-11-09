@@ -69,10 +69,10 @@ void buscarNomePaciente(FichaHosp Paciente[], int numeroPacientes, char nomeBusc
 
 void buscarIDPaciente(FichaHosp Paciente[], int numeroPacientes, int idBuscado)
 { // FUNÇAO PARA BUSCAR POR IDENTIFICADOR DE PACIENTE
-    if (idBuscado > 0)
+    if (idBuscado > 0 or idBuscado > numeroPacientes)
     {
         int esquerda = 0;
-        int direita = numeroPacientes - 1;
+        int direita = numeroPacientes;
         bool encontrou = false;
         while (esquerda <= direita and encontrou == false)
         {
