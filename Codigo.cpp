@@ -18,16 +18,16 @@ CARLOS EDUARDO BORGES DE SOUSA
 
 struct FichaHosp {	//CRIA O REGISTRO
     int identificador;
-    char nome[42];
+    char nome[30];
     char genero;
     float altura;
     float peso;
-    char patologia[42];
+    char patologia[30];
 };
 
-void IMPRIMIR(FichaHosp pacientes[], int tamanho) {	//FUNÇÃO PARA IMPRIMIR
+void IMPRIMIR(FichaHosp Paciente[], int tamanho) {	//FUNÇÃO PARA IMPRIMIR
     for (int i = 0; i < tamanho; i++) {
-        cout <<pacientes[i].identificador << " " << pacientes[i].nome << " " << pacientes[i].genero << " " << pacientes[i].peso << "kg " << pacientes[i].altura << "m " << pacientes[i].patologia << endl << endl;
+        cout <<Paciente[i].identificador << " " << Paciente[i].nome << " " << Paciente[i].genero << " " << Paciente[i].peso << "kg " << Paciente[i].altura << "m " << Paciente[i].patologia << endl << endl;
     }
 }
 void buscarPaciente(FichaHosp Paciente[],int numeroPacientes,char nomeBuscado[]){
@@ -82,7 +82,9 @@ void buscarIDPaciente(FichaHosp Paciente[],int numeroPacientes,int idBuscado){
 		}
 		}
 	}else{
-		cout << "Digite um numero valido";
+		cout << "Digite um numero valido: ";
+        cin >> idBuscado;
+        buscarIDPaciente(Paciente,numeroPacientes,idBuscado);
 	}
 }
 int main() {
@@ -91,11 +93,12 @@ int main() {
     ifstream arqE("registro.csv");
     int numeroPacientes = 30;
     
+    FichaHosp* Paciente = new FichaHosp[numeroPacientes];
+    
     if (not arqE) {	//VERIFICAÇÃO DE ABERTURA
         cout << "Erro na leitura do arquivo";
     }
     else {
-        FichaHosp Paciente[numeroPacientes];
         char virgula;
         for (int i = 0; i < numeroPacientes; i++) {
 			arqE >> Paciente[i].identificador;
@@ -121,7 +124,7 @@ int main() {
     cin >> escolha;
     switch(escolha){
         case 1:
-            IMPRIMIR(Paciente, numeroPacientes);
+            IMPRIMIR(Paciente,numeroPacientes);
             break;
            case 2:
            char nomeBuscado[30];
@@ -139,7 +142,7 @@ int main() {
             return 0;
             break;
         }
-    }
+    
 
     return 0;
 }
