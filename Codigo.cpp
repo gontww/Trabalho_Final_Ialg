@@ -25,9 +25,9 @@ struct FichaHosp
   char patologia[30];
 };
 
-void IMPRIMIR(FichaHosp Paciente[], int numeroAtualPaciente)
+void IMPRIMIR(FichaHosp Paciente[], int tamanho)
 { // FUNÇÃO PARA IMPRIMIR
-  for (int i = 0; i < numeroAtualPaciente-1; i++)
+  for (int i = 0; i < tamanho-1; i++)
   {
     cout << Paciente[i].identificador << " " << Paciente[i].nome << " "
          << Paciente[i].genero << " " << Paciente[i].peso << "kg "
@@ -36,14 +36,14 @@ void IMPRIMIR(FichaHosp Paciente[], int numeroAtualPaciente)
   }
 }
 void buscarNomePaciente(
-    FichaHosp Paciente[], int numeroAtualPacientes,
+    FichaHosp Paciente[], int tamanho,
     char nomeBuscado[])
 { // FUNÇAO PARA BUSCAR POR NOME DO PACIENTE
   int j = 0;
   char *ptr;
-  int nomesEncontrados[numeroAtualPacientes];
+  int nomesEncontrados[tamanho];
 
-  for (int i = 0; i < numeroAtualPacientes; i++)
+  for (int i = 0; i < tamanho; i++)
   {
     ptr = strstr(Paciente[i].nome, nomeBuscado);
     if (ptr)
@@ -72,13 +72,13 @@ void buscarNomePaciente(
 }
 
 void buscarIDPaciente(
-    FichaHosp Paciente[], int numeroAtualPacientes,
+    FichaHosp Paciente[], int tamanho,
     int idBuscado)
 { // FUNÇAO PARA BUSCAR POR IDENTIFICADOR DE PACIENTE
-  if (idBuscado > 0 and idBuscado <= numeroAtualPacientes)
+  if (idBuscado > 0 and idBuscado <= tamanho)
   {
     int esquerda = 0;
-    int direita = numeroAtualPacientes;
+    int direita = tamanho;
     bool encontrou = false;
     while (esquerda <= direita and encontrou == false)
     {
@@ -106,7 +106,7 @@ void buscarIDPaciente(
   {
     cout << "Digite um numero valido: ";
     cin >> idBuscado;
-    buscarIDPaciente(Paciente, numeroAtualPacientes, idBuscado);
+    buscarIDPaciente(Paciente, tamanho, idBuscado);
   }
 }
 int main()
@@ -115,10 +115,10 @@ int main()
   cout << setprecision(2); // LIMITA 2 DIGITOS DEPOIS DA VIRGULA
 
   ifstream arqE("registro.csv");
-  int numeroPacientes = 30;
-  int numeroAtualPacientes = 0;
+  int capacidades = 75;
+  int tamanho = 0;
 
-  FichaHosp *Paciente = new FichaHosp[numeroPacientes];
+  FichaHosp *Paciente = new FichaHosp[capacidades];
 
   if (not arqE)
   { // VERIFICAÇÃO DE ABERTURA
@@ -129,32 +129,32 @@ int main()
     char virgula;
     while (arqE)
     {
-      if (numeroAtualPacientes >= numeroPacientes - 1)
+      if (tamanho >= capacidades - 1)
       {
-        FichaHosp *Pivo = new FichaHosp[numeroPacientes + 1];
-        for (int i = 0; i < numeroAtualPacientes; i++)
+        FichaHosp *Pivo = new FichaHosp[capacidades + 1];
+        for (int i = 0; i < tamanho; i++)
         {
           Pivo[i] = Paciente[i];
         }
         delete[] Paciente;
         Paciente = Pivo;
-        numeroPacientes += 1;
+        capacidades += 1;
       }
 
-      arqE >> Paciente[numeroAtualPacientes].identificador;
+      arqE >> Paciente[tamanho].identificador;
       arqE >> virgula; // Leitura da vírgula
-      arqE.get(Paciente[numeroAtualPacientes].nome, 30, ',');
+      arqE.get(Paciente[tamanho].nome, 30, ',');
       arqE >> virgula; // Leitura da vírgula
-      arqE >> Paciente[numeroAtualPacientes].genero;
+      arqE >> Paciente[tamanho].genero;
       arqE >> virgula; // Leitura da vírgula
-      arqE >> Paciente[numeroAtualPacientes].peso;
+      arqE >> Paciente[tamanho].peso;
       arqE >> virgula; // Leitura da vírgula
-      arqE >> Paciente[numeroAtualPacientes].altura;
+      arqE >> Paciente[tamanho].altura;
       arqE >> virgula; // Leitura da vírgula
-      arqE.get(Paciente[numeroAtualPacientes].patologia, 30, ',');
+      arqE.get(Paciente[tamanho].patologia, 30, ',');
       arqE.ignore(); // Ignora a vírgula após o último campo
 
-      numeroAtualPacientes += 1; // Aumenta e retorna pro loop while
+      tamanho += 1; // Aumenta e retorna pro loop while
     }
     int escolha;
     cout << "ESCOLHA O QUE DESEJA FAZER:" << endl
@@ -166,19 +166,19 @@ int main()
     switch (escolha)
     {
     case 1:
-      IMPRIMIR(Paciente, numeroAtualPacientes);
+      IMPRIMIR(Paciente, tamanho);
       break;
     case 2:
       char nomeBuscado[30];
       cout << "Digite o nome que deseja pesquisar: ";
       cin >> nomeBuscado;
-      buscarNomePaciente(Paciente, numeroPacientes, nomeBuscado);
+      buscarNomePaciente(Paciente, capacidades, nomeBuscado);
       break;
     case 3:
       int idBuscado;
       cout << "Digite o numero de identificacao: ";
       cin >> idBuscado;
-      buscarIDPaciente(Paciente, numeroPacientes, idBuscado);
+      buscarIDPaciente(Paciente, capacidades, idBuscado);
       break;
     case 0:
       return 0;
