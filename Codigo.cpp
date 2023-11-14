@@ -210,6 +210,8 @@ int main()
          << "[1] IMPRIMIR FICHA DOS PACIENTES" << endl
          << "[2] PESQUISAR NOME DE PACIENTE" << endl
          << "[3] BUSCAR POR IDENTIFICADOR DO PACIENTE" << endl
+         << "[4] ADICIONAR PACIENTE" << endl;
+         << "[5] REMOVER PACIENTE" << endl
          << "[0] FECHAR O PROGRAMA" << endl;
     cin >> escolha;
     switch (escolha)
@@ -228,6 +230,15 @@ int main()
       cout << "Digite o numero de identificacao: ";
       cin >> idBuscado;
       buscarIDPaciente(Paciente, capacidades, idBuscado);
+      break;
+    case 4:
+      adicionarPaciente(Paciente, capacidades);
+      break;
+    case 5:
+      int idRemover;
+      cout << "Digite o identificador do paciente que deseja remover: ";
+      cin >> idRemover;
+      removerPaciente(Paciente, capacidades, idRemover);
       break;
     case 0:
       return 0;
