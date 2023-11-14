@@ -109,6 +109,55 @@ void buscarIDPaciente(
     buscarIDPaciente(Paciente, tamanho, idBuscado);
   }
 }
+
+void adicionarPaciente(FichaHosp Paciente[], int &numeroPacientes)
+{
+    if (numeroPacientes < 50)
+    {
+        cout << "Digite os dados do novo paciente:" << endl;
+        cout << "Identificador: ";
+        cin >> Paciente[numeroPacientes].identificador;
+
+        cout << "Nome: ";
+        cin >> Paciente[numeroPacientes].nome;
+
+        cout << "Genero: ";
+        cin >> Paciente[numeroPacientes].genero;
+
+        cout << "Peso: ";
+        cin >> Paciente[numeroPacientes].peso;
+
+        cout << "Altura: ";
+        cin >> Paciente[numeroPacientes].altura;
+
+        cout << "Patologia: ";
+        cin >> Paciente[numeroPacientes].patologia;
+
+        numeroPacientes++;
+    }
+    else
+    {
+        cout << "Limite de pacientes atingido." << endl;
+    }
+}
+
+void removerPaciente(FichaHosp Paciente[], int &numeroPacientes, int idRemover)
+{
+    if (idRemover > 0 && idRemover <= numeroPacientes)
+    {
+        for (int i = idRemover - 1; i < numeroPacientes - 1; i++)
+        {
+            Paciente[i] = Paciente[i + 1];
+        }
+        numeroPacientes--;
+        cout << "Paciente removido com sucesso." << endl;
+    }
+    else
+    {
+        cout << "Identificador de paciente invalido." << endl;
+    }
+}
+
 int main()
 {
   cout << fixed;
