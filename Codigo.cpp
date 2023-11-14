@@ -210,7 +210,7 @@ int main()
          << "[1] IMPRIMIR FICHA DOS PACIENTES" << endl
          << "[2] PESQUISAR NOME DE PACIENTE" << endl
          << "[3] BUSCAR POR IDENTIFICADOR DO PACIENTE" << endl
-         << "[4] ADICIONAR PACIENTE" << endl;
+         << "[4] ADICIONAR PACIENTE" << endl
          << "[5] REMOVER PACIENTE" << endl
          << "[0] FECHAR O PROGRAMA" << endl;
     cin >> escolha;
