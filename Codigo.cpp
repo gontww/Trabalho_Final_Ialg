@@ -27,7 +27,7 @@ struct FichaHosp
 
 void IMPRIMIR(FichaHosp Paciente[], int tamanho)
 { // FUNÇÃO PARA IMPRIMIR
-  for (int i = 0; i < tamanho-1; i++)
+  for (int i = 0; i < tamanho - 1; i++)
   {
     cout << Paciente[i].identificador << " " << Paciente[i].nome << " "
          << Paciente[i].genero << " " << Paciente[i].peso << "kg "
@@ -35,9 +35,7 @@ void IMPRIMIR(FichaHosp Paciente[], int tamanho)
          << endl;
   }
 }
-void buscarNomePaciente(
-    FichaHosp Paciente[], int tamanho,
-    char nomeBuscado[])
+void buscarNomePaciente(FichaHosp Paciente[], int tamanho, char nomeBuscado[])
 { // FUNÇAO PARA BUSCAR POR NOME DO PACIENTE
   int j = 0;
   char *ptr;
@@ -89,6 +87,7 @@ void buscarIDPaciente(
              << Paciente[meio - 1].nome << " " << Paciente[meio - 1].genero
              << " " << Paciente[meio - 1].peso << " "
              << Paciente[meio - 1].altura << " " << Paciente[meio - 1].patologia
+             << endl
              << endl;
         encontrou = true;
       }
@@ -110,64 +109,122 @@ void buscarIDPaciente(
   }
 }
 
-void adicionarPaciente(FichaHosp Paciente[], int &numeroPacientes)
+void adicionarPaciente(FichaHosp Paciente[], int &capacidade, int &tamanho)
 {
-    if (numeroPacientes < 50)
-    {
-        cout << "Digite os dados do novo paciente:" << endl;
-        cout << "Identificador: ";
-        cin >> Paciente[numeroPacientes].identificador;
+  capacidade++;
 
-        cout << "Nome: ";
-        cin >> Paciente[numeroPacientes].nome;
+  cout << "Digite os dados do novo paciente:" << endl;
+  cout << "Identificador: " << tamanho-- << endl;
 
-        cout << "Genero: ";
-        cin >> Paciente[numeroPacientes].genero;
+  cout << "Nome: ";
+  cin >> Paciente[capacidade].nome;
 
-        cout << "Peso: ";
-        cin >> Paciente[numeroPacientes].peso;
+  cout << "Genero: ";
+  cin >> Paciente[capacidade].genero;
 
-        cout << "Altura: ";
-        cin >> Paciente[numeroPacientes].altura;
+  cout << "Peso: ";
+  cin >> Paciente[capacidade].peso;
 
-        cout << "Patologia: ";
-        cin >> Paciente[numeroPacientes].patologia;
+  cout << "Altura: ";
+  cin >> Paciente[capacidade].altura;
 
-        numeroPacientes++;
-    }
-    else
-    {
-        cout << "Limite de pacientes atingido." << endl;
-    }
+  cout << "Patologia: ";
+  cin >> Paciente[capacidade].patologia;
+
+  tamanho++;
+  
 }
 
-void removerPaciente(FichaHosp Paciente[], int &numeroPacientes, int idRemover)
+void removerPaciente(FichaHosp Paciente[], int &capacidade, int idRemover) // REMOVER PACIENTE
 {
-    if (idRemover > 0 && idRemover <= numeroPacientes)
+  if (idRemover > 0 && idRemover <= capacidade)
+  {
+    for (int i = idRemover - 1; i < capacidade - 1; i++)
     {
-        for (int i = idRemover - 1; i < numeroPacientes - 1; i++)
-        {
-            Paciente[i] = Paciente[i + 1];
-        }
-        numeroPacientes--;
-        cout << "Paciente removido com sucesso." << endl;
+      Paciente[i] = Paciente[i + 1];
     }
-    else
-    {
-        cout << "Identificador de paciente invalido." << endl;
-    }
+    capacidade--;
+    cout << "Paciente removido com sucesso." << endl;
+  }
+  else
+  {
+    cout << "Identificador de paciente invalido." << endl;
+  }
 }
+void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente);
+void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente)
+{ // MENU DE ESCOLHA PRINCIPAL
+  int escolha;
+  cout << "ESCOLHA O QUE DESEJA FAZER:" << endl
+       << "[1] IMPRIMIR FICHA DOS PACIENTES" << endl
+       << "[2] PESQUISAR NOME DE PACIENTE" << endl
+       << "[3] BUSCAR POR IDENTIFICADOR DO PACIENTE" << endl
+       << "[4] ADICIONAR PACIENTE" << endl
+       << "[5] REMOVER PACIENTE" << endl
+       << "[0] FECHAR O PROGRAMA" << endl;
+  cin >> escolha;
+  switch (escolha)
+  {
+  case 1:
+    IMPRIMIR(Paciente, tamanho);
+    menu1ou0(capacidade, tamanho, Paciente);
+    break;
+  case 2:
+    char nomeBuscado[30];
+    cout << "Digite o nome que deseja pesquisar: ";
+    cin >> nomeBuscado;
+    buscarNomePaciente(Paciente, capacidade, nomeBuscado);
+    menu1ou0(capacidade, tamanho, Paciente);
+    break;
+  case 3:
+    int idBuscado;
+    cout << "Digite o numero de identificacao: ";
+    cin >> idBuscado;
+    buscarIDPaciente(Paciente, capacidade, idBuscado);
+    menu1ou0(capacidade, tamanho, Paciente);
+    break;
+  case 4:
+    adicionarPaciente(Paciente, capacidade, tamanho);
+    menu1ou0(capacidade, tamanho, Paciente);
+    break;
+  case 5:
+    int idRemover;
+    cout << "Digite o identificador do paciente que deseja remover: ";
+    cin >> idRemover;
+    removerPaciente(Paciente, capacidade, idRemover);
+    menu1ou0(capacidade, tamanho, Paciente);
+    break;
+  case 0:
+    break;
+  }
+}
+void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente)
+{
+  int escolha;
+  cout << "ESCOLHA O QUE DESEJA FAZER:" << endl
+       << "[1] VOLTAR PARA O MENU PRINCIPAL" << endl
+       << "[0] FECHAR PROGRAMA" << endl;
+  cin >> escolha;
+  switch (escolha)
+  {
+  case 1:
+    menuPrincipal(capacidade, tamanho, Paciente);
+    break;
 
+  case 0:
+    break;
+  }
+}
 int main()
 {
   cout << fixed;
   cout << setprecision(2); // LIMITA 2 DIGITOS DEPOIS DA VIRGULA
 
   ifstream arqE("registro.csv");
-  int capacidades = 75;
+  int capacidade = 75;
   int tamanho = 0;
 
-  FichaHosp *Paciente = new FichaHosp[capacidades];
+  FichaHosp *Paciente = new FichaHosp[capacidade];
 
   if (not arqE)
   { // VERIFICAÇÃO DE ABERTURA
@@ -178,16 +235,16 @@ int main()
     char virgula;
     while (arqE)
     {
-      if (tamanho >= capacidades - 1)
+      if (tamanho >= capacidade - 1)
       {
-        FichaHosp *Pivo = new FichaHosp[capacidades + 1];
+        FichaHosp *Pivo = new FichaHosp[capacidade + 1];
         for (int i = 0; i < tamanho; i++)
         {
           Pivo[i] = Paciente[i];
         }
         delete[] Paciente;
         Paciente = Pivo;
-        capacidades += 1;
+        capacidade += 1;
       }
 
       arqE >> Paciente[tamanho].identificador;
@@ -205,46 +262,7 @@ int main()
 
       tamanho += 1; // Aumenta e retorna pro loop while
     }
-    int escolha;
-    cout << "ESCOLHA O QUE DESEJA FAZER:" << endl
-         << "[1] IMPRIMIR FICHA DOS PACIENTES" << endl
-         << "[2] PESQUISAR NOME DE PACIENTE" << endl
-         << "[3] BUSCAR POR IDENTIFICADOR DO PACIENTE" << endl
-         << "[4] ADICIONAR PACIENTE" << endl
-         << "[5] REMOVER PACIENTE" << endl
-         << "[0] FECHAR O PROGRAMA" << endl;
-    cin >> escolha;
-    switch (escolha)
-    {
-    case 1:
-      IMPRIMIR(Paciente, tamanho);
-      break;
-    case 2:
-      char nomeBuscado[30];
-      cout << "Digite o nome que deseja pesquisar: ";
-      cin >> nomeBuscado;
-      buscarNomePaciente(Paciente, capacidades, nomeBuscado);
-      break;
-    case 3:
-      int idBuscado;
-      cout << "Digite o numero de identificacao: ";
-      cin >> idBuscado;
-      buscarIDPaciente(Paciente, capacidades, idBuscado);
-      break;
-    case 4:
-      adicionarPaciente(Paciente, capacidades);
-      break;
-    case 5:
-      int idRemover;
-      cout << "Digite o identificador do paciente que deseja remover: ";
-      cin >> idRemover;
-      removerPaciente(Paciente, capacidades, idRemover);
-      break;
-    case 0:
-      return 0;
-      break;
-    }
-
-    return 0;
+    menuPrincipal(capacidade, tamanho, Paciente);
   }
+  return 0;
 }
