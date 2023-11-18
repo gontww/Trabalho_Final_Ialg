@@ -27,7 +27,7 @@ struct FichaHosp
 
 void IMPRIMIR(FichaHosp Paciente[], int tamanho)
 { // FUNÇÃO PARA IMPRIMIR
-  for (int i = 0; i < tamanho - 1; i++)
+  for (int i = 0; i < tamanho-1 ; i++)
   {
     cout << Paciente[i].identificador << " " << Paciente[i].nome << " "
          << Paciente[i].genero << " " << Paciente[i].peso << "kg "
@@ -108,31 +108,44 @@ void buscarIDPaciente(
     buscarIDPaciente(Paciente, tamanho, idBuscado);
   }
 }
-
-void adicionarPaciente(FichaHosp Paciente[], int &capacidade, int &tamanho)
+void gravarEmBinario(int tamanho, FichaHosp Paciente[]);
+void adicionarPaciente(FichaHosp Paciente[], int &capacidade, int &tamanho) // ADICIONAR PACIENTES
 {
-  capacidade++;
-
   cout << "Digite os dados do novo paciente:" << endl;
-  cout << "Identificador: " << tamanho-- << endl;
+  cout << "Identificador: " << tamanho << endl;
+  Paciente[tamanho-1].identificador=tamanho;
 
   cout << "Nome: ";
-  cin >> Paciente[capacidade].nome;
+  cin.ignore();                           
+  cin.getline(Paciente[tamanho-1].nome, 30);
 
   cout << "Genero: ";
-  cin >> Paciente[capacidade].genero;
+  cin >> Paciente[tamanho-1].genero;
 
   cout << "Peso: ";
-  cin >> Paciente[capacidade].peso;
+  cin >> Paciente[tamanho-1].peso;
 
   cout << "Altura: ";
-  cin >> Paciente[capacidade].altura;
+  cin >> Paciente[tamanho-1].altura;
 
   cout << "Patologia: ";
-  cin >> Paciente[capacidade].patologia;
+  cin >> Paciente[tamanho-1].patologia;
 
+  capacidade++;
   tamanho++;
-  
+  if (tamanho >= capacidade - 1)
+      {
+        FichaHosp *Pivo = new FichaHosp[capacidade + 1];
+        for (int i = 0; i < tamanho; i++)
+        {
+          Pivo[i] = Paciente[i];
+        }
+        delete[] Paciente;
+        Paciente = Pivo;
+        capacidade+=1;
+      }  
+      cout << tamanho << " " << capacidade;
+    gravarEmBinario(tamanho,Paciente);
 }
 
 void removerPaciente(FichaHosp Paciente[], int &capacidade, int idRemover) // REMOVER PACIENTE
@@ -151,9 +164,44 @@ void removerPaciente(FichaHosp Paciente[], int &capacidade, int idRemover) // RE
     cout << "Identificador de paciente invalido." << endl;
   }
 }
+
+void gravarEmBinario(int tamanho, FichaHosp Paciente[]){
+    ofstream arqSBin ("registroBin.bin", ios::binary);                         // SALVAR EM BINARIO
+    for(int i=0;i<tamanho-1;i++){
+      arqSBin.write(reinterpret_cast<char*>(&Paciente[tamanho-1]), sizeof(FichaHosp));
+    }
+}
+void lerArquivoBinario(FichaHosp Paciente[], int &tamanho)
+{
+    ifstream arquivoEntrada("registroBin.bin", ios::binary);
+
+    if (!arquivoEntrada)
+    {
+        cout << "Erro ao abrir o arquivo de entrada." << endl;
+        return;
+    }
+
+    arquivoEntrada.read(reinterpret_cast<char*>(Paciente), (tamanho-1) * sizeof(FichaHosp));
+
+    tamanho = arquivoEntrada.gcount() / sizeof(FichaHosp);
+
+    cout << "Dados lidos do arquivo 'Registro Bin.bin':" << endl;
+    for (int i = 0; i < tamanho; i++)
+    {
+        cout << Paciente[i].identificador << " "
+             << Paciente[i].nome << " "
+             << Paciente[i].genero << " "
+             << Paciente[i].peso << " "
+             << Paciente[i].altura << " "
+             << Paciente[i].patologia << endl;
+    }
+
+    arquivoEntrada.close();
+}
+
 void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente);
 void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente)
-{ // MENU DE ESCOLHA PRINCIPAL
+{                                                                                   // MENU DE ESCOLHA PRINCIPAL
   int escolha;
   cout << "ESCOLHA O QUE DESEJA FAZER:" << endl
        << "[1] IMPRIMIR FICHA DOS PACIENTES" << endl
@@ -248,21 +296,32 @@ int main()
       }
 
       arqE >> Paciente[tamanho].identificador;
-      arqE >> virgula; // Leitura da vírgula
+      arqE >> virgula; 
       arqE.get(Paciente[tamanho].nome, 30, ',');
-      arqE >> virgula; // Leitura da vírgula
+      arqE >> virgula; 
       arqE >> Paciente[tamanho].genero;
-      arqE >> virgula; // Leitura da vírgula
+      arqE >> virgula; 
       arqE >> Paciente[tamanho].peso;
-      arqE >> virgula; // Leitura da vírgula
+      arqE >> virgula; 
       arqE >> Paciente[tamanho].altura;
-      arqE >> virgula; // Leitura da vírgula
+      arqE >> virgula; 
       arqE.get(Paciente[tamanho].patologia, 30, ',');
       arqE.ignore(); // Ignora a vírgula após o último campo
 
       tamanho += 1; // Aumenta e retorna pro loop while
     }
     menuPrincipal(capacidade, tamanho, Paciente);
+  }
+  gravarEmBinario(tamanho,Paciente);
+  ofstream arqSCSV("registro2.csv");
+  for (int i=0;i<capacidade;i++){
+  arqSCSV << Paciente[i].identificador << ','
+             << Paciente[i].nome << ','
+             << Paciente[i].genero << ','
+             << Paciente[i].peso << ','
+             << Paciente[i].altura << ','
+             << Paciente[i].patologia << ','
+             << endl;
   }
   return 0;
 }
