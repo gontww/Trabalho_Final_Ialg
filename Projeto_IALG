@@ -147,14 +147,14 @@ void addPaciente(FichaHosp *&Paciente,int &capacidade,int &tamanho)
 }
 void salvarBinarioCsv(FichaHosp *&Paciente, int tamanho,char virgula){
     ofstream arqBin ("registroBinario.bin", ios::binary);
-    ofstream arqS ("registroSaida.csv");
+    ofstream arqS ("registroNovo.csv");
     for (int i = 0; i < tamanho-1; i++) {
         arqBin.write((char*) &Paciente[i], sizeof(FichaHosp));
     }
     for (int i = 0; i < tamanho-1; i++) {
         arqS << Paciente[i].identificador;
         arqS << virgula;
-        arqS.write(Paciente[i].nome, 30);
+        arqS.write(Paciente[i].nome, strlen(Paciente[i].nome));
         arqS << virgula;
         arqS << Paciente[i].genero;
         arqS << virgula;
@@ -162,9 +162,10 @@ void salvarBinarioCsv(FichaHosp *&Paciente, int tamanho,char virgula){
         arqS << virgula;
         arqS << Paciente[i].altura;
         arqS << virgula;
-        arqS.write(Paciente[i].patologia, 30);
+        arqS.write(Paciente[i].patologia, strlen(Paciente[i].patologia));
         arqS << virgula << endl;
     }
+    cout << "Foi criado com a lista atual de Pacientes um novo .csv  e um arquivo binario." << endl;
 }
 void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente,char virgula);
 void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente,char virgula)
