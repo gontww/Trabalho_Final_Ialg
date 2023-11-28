@@ -174,17 +174,70 @@ void salvarBinarioCsv(FichaHosp *&Paciente, int tamanho) //GRAVA OS VETORES EM A
     }
     cout << "Foi criado com a lista atual de Pacientes um novo .csv  e um arquivo binario, nomeados respectivamente: 'registroNovo.csv' 'registroBinarioNovo.bin'." << endl;
 }
+void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente);
+void removerPaciente(FichaHosp Paciente[], int &tamanho, int capacidade){
+    int idRemover;
+    cout << "Digite o identificador do Paciente que deseja remover (entre 1 e " << tamanho -1 << "): ";
+    cin.ignore();
+    cin >> idRemover;
+    if(idRemover > 0 and idRemover < tamanho){
+      cout <<
+      endl << "Identificador: " << Paciente[idRemover-1].identificador << 
+      endl << "Nome: " << Paciente[idRemover-1].nome <<
+      endl << "Genero: " << Paciente[idRemover-1].genero << 
+      endl << "Peso: " << Paciente[idRemover-1].peso << "kg" << 
+      endl << "Altura: " << Paciente[idRemover-1].altura << "m" << 
+      endl << "Patologia: " <<Paciente[idRemover-1].patologia << endl;
+
+      cout << "Deseja remover este paciente?" << 
+      endl << "[S/N]" << endl;
+      char SimOuNao;
+      cin >> SimOuNao;
+      if(SimOuNao =='S' or SimOuNao == 's'){
+        for (int i = idRemover; i < tamanho; i++){
+            strcpy(Paciente[i-1].nome, Paciente[i].nome);
+            Paciente[i-1].genero = Paciente[i].genero;
+            Paciente[i-1].peso = Paciente[i].peso;
+            Paciente[i-1].altura = Paciente[i].altura;
+            strcpy(Paciente[i-1].patologia, Paciente[i].patologia);
+        }
+        tamanho--;
+        for(int i=0;i<tamanho;i++){
+          Paciente[i].identificador = i+1;
+        }
+        cout << "Paciente removido!" << endl;
+        menuPrincipal(capacidade, tamanho, Paciente);
+      }
+      else if(SimOuNao == 'N' or SimOuNao == 'n'){
+        cout << "Deseja remover outro Paciente?" << 
+        endl << "[S/N]" << endl;
+        char SairOuNao;
+        cin >> SairOuNao;
+        if(SairOuNao == 'n' or SairOuNao == 'N'){
+        menuPrincipal(capacidade,tamanho,Paciente);
+        }
+        else{
+          removerPaciente(Paciente,tamanho,capacidade);
+        }
+      }
+    }
+    else{
+      cout << "Digite um numero valido!" << endl;
+      removerPaciente(Paciente,tamanho,capacidade);
+    }
+}
 void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente);
 void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente)// MENU DE ESCOLHA QUE É APRESENTADO AS FUNCIONALIDADES DO CODIGO, CHAMA A FUNÇAO "menu1ou0" APOS O 'CASE' FINALIZAR
 {
     int escolha;
-    cout << "ESCOLHA O QUE DESEJA FAZER:" << endl
-         << "[1] IMPRIMIR FICHA DOS PACIENTES" << endl
-         << "[2] PESQUISAR NOME DE PACIENTE" << endl
-         << "[3] BUSCAR POR IDENTIFICADOR DO PACIENTE" << endl
-         << "[4] ADICIONAR PACIENTE" << endl
-         << "[5] SALVAR LISTA ATUAL EM BINARIO E CSV" << endl
-         << "[0] FECHAR O PROGRAMA" << endl;
+    cout << "Escolha o que deseja fazer:" << endl
+         << "[1] Imprimir ficha dos pacientes" << endl
+         << "[2] Pesquisar nome de pacientes" << endl
+         << "[3] Buscar por identificador de paciente" << endl
+         << "[4] Adicionar paciente" << endl
+         << "[5] Salvar lista atual em binario e csv" << endl
+         << "[6] Remover paciente" << endl
+         << "[0] Fechar o programa" << endl;
     cin >> escolha;
     switch (escolha)
     {
@@ -208,11 +261,13 @@ void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente)// MENU DE E
         break;
     case 4:
         addPaciente(Paciente, capacidade, tamanho);
-        menu1ou0(capacidade, tamanho, Paciente);
         break;
     case 5:
         salvarBinarioCsv(Paciente, tamanho);
         menu1ou0(capacidade, tamanho, Paciente);
+        break;
+    case 6:
+        removerPaciente(Paciente, tamanho, capacidade);
         break;
     default:
         break;
@@ -235,6 +290,7 @@ void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente) // ESSA FUNÇAO 
         break;
     }
 }
+
 
 int main()
 {
