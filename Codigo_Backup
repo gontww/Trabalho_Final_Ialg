@@ -26,7 +26,6 @@ struct FichaHosp
 
 void aumentarCapacidade(FichaHosp *&Paciente, int &capacidade, int &tamanho) // PROCEDIMENTO PARA REDIMENSIONAR DE 1 EM 1 A CAPACIDADE DO VETOR
 {
-    cout << "aumentou" << tamanho << "/" << capacidade << endl;
     FichaHosp *Pivo = new FichaHosp[capacidade + 1];
     for (int i = 0; i < tamanho; i++)
     {
@@ -153,7 +152,7 @@ void salvarBinarioCsv(FichaHosp *&Paciente, int tamanho) // GRAVA OS VETORES EM 
 {
     ofstream arqBin("registroBinarioNovo.bin", ios::binary);
     ofstream arqS("registroNovo.csv");
-    for (int i = 0; i < tamanho; i++)
+    for (int i = 0; i < tamanho-1; i++)
     {
         arqBin.write((char *)&Paciente[i], sizeof(FichaHosp));
     }
@@ -178,6 +177,87 @@ void salvarBinarioCsv(FichaHosp *&Paciente, int tamanho) // GRAVA OS VETORES EM 
 void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente);
 void removerPaciente(FichaHosp Paciente[], int &tamanho, int capacidade);
 void pesquisarParte(int tamanho, FichaHosp *Paciente, int capacidade);
+void ordenarLista(int tamanho, FichaHosp *Paciente, int capacidade){
+    int gaps[9]={1, 4, 10, 23, 57, 132, 301, 701, 1750};
+    int posgap = 8;
+    int escolha;
+    cout << "Deseja ordenar entre:" << endl
+         << "[1] Nome" << endl
+         << "[2] Peso" << endl
+         << "[3] Altura" << endl;
+    cin >> escolha;
+    switch (escolha)
+    {
+    case 1:
+        while(gaps[posgap]>=tamanho-1){
+        posgap--;
+    }
+    while(posgap>=0)
+    {
+        int gap = gaps[posgap];
+        for(int i=gap;i<tamanho-1;i++){
+            FichaHosp aux;
+            aux = Paciente[i];
+            int j = i;
+
+            while(j>=gap and strcmp(Paciente[j-gap].nome, aux.nome) > 0){
+                Paciente[j] = Paciente[j-gap];
+                j = j - gap;
+            }
+            Paciente[j] = aux;
+        }
+        posgap--;
+
+    }
+        break;
+    case 2:
+        while(gaps[posgap]>=tamanho-1){
+        posgap--;
+    }
+    while(posgap>=0)
+    {
+        int gap = gaps[posgap];
+        for(int i=gap;i<tamanho-1;i++){
+            FichaHosp aux;
+            aux = Paciente[i];
+            int j = i;
+
+            while(j>=gap and Paciente[j-gap].peso > aux.peso){
+                Paciente[j] = Paciente[j-gap];
+                j = j - gap;
+            }
+            Paciente[j] = aux;
+        }
+        posgap--;
+
+    }
+    break;
+    case 3:
+        while(gaps[posgap]>=tamanho-1){
+        posgap--;
+    }
+    while(posgap>=0)
+    {
+        int gap = gaps[posgap];
+        for(int i=gap;i<tamanho-1;i++){
+            FichaHosp aux;
+            aux = Paciente[i];
+            int j = i;
+
+            while(j>=gap and Paciente[j-gap].altura > aux.altura){
+                Paciente[j] = Paciente[j-gap];
+                j = j - gap;
+            }
+            Paciente[j] = aux;
+        }
+        posgap--;
+
+    }
+    default:
+        break;
+    }
+    
+}
 void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente) // MENU DE ESCOLHA QUE É APRESENTADO AS FUNCIONALIDADES DO CODIGO, CHAMA A FUNÇAO "menu1ou0" APOS O 'CASE' FINALIZAR
 {
     int escolha;
@@ -188,7 +268,8 @@ void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente) // MENU DE 
          << "[4] ADICIONAR PACIENTE" << endl
          << "[5] SALVAR LISTA ATUAL EM BINARIO E CSV" << endl
          << "[6] REMOVER PACIENTE" << endl
-         << "[7] Pesquisar dentro de uma faixa de informacão" << endl
+         << "[7] PESQUISAR DENTRO DE UMA FAIXA DE INFORMACAO" << endl
+         << "[8] ORDENAR A LISTA DE OUTRA MANEIRA" << endl
          << "[0] FECHAR O PROGRAMA" << endl;
     cin >> escolha;
     switch (escolha)
@@ -225,6 +306,10 @@ void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente) // MENU DE 
     case 7:
         pesquisarParte(tamanho, Paciente, capacidade);
         break;
+    case 8:
+        ordenarLista(tamanho, Paciente, capacidade);
+        menu1ou0(capacidade, tamanho, Paciente);
+        break;
     default:
         break;
     }
@@ -246,11 +331,11 @@ void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente) // ESSA FUNÇAO 
         break;
     }
 }
-void pesquisarParte(int tamanho, FichaHosp *Paciente, int capacidade)
+void pesquisarParte(int tamanho, FichaHosp *Paciente, int capacidade) //FUNCAO QUE BUSCA DENTRO DE UMA FAIXA NUMEROS QUE O USUARIO DESEJA 
 {
     int escolha;
     cout << "Deseja pesquisar entre:" << endl
-         << "[1] Identificador" << endl
+         << "[1] Posicao no vetor" << endl
          << "[2] Peso" << endl
          << "[3] Altura" << endl;
     cin >> escolha;
@@ -383,7 +468,7 @@ void pesquisarParte(int tamanho, FichaHosp *Paciente, int capacidade)
     break;
     }
 }
-void removerPaciente(FichaHosp Paciente[], int &tamanho, int capacidade)
+void removerPaciente(FichaHosp Paciente[], int &tamanho, int capacidade) //FUNÇAO DE REMOVER PACIENTE
 {
     int idRemover;
     cout << "Digite o identificador do Paciente que deseja remover (entre 1 e " << tamanho - 1 << "): ";
