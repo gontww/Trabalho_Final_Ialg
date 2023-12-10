@@ -39,7 +39,8 @@ void aumentarCapacidade(FichaHosp *&Paciente, int &capacidade, int &tamanho) // 
     Paciente = Pivo;
     capacidade += 1;
 }
-void imprimirLista(FichaHosp Paciente[], int tamanho) // IMPRIME OS PACIENTES DA MEMORIA
+
+void imprimirLista(FichaHosp Paciente[], int tamanho)
 {
     for (int i = 0; i < tamanho - 1; i++)
     {
@@ -49,6 +50,7 @@ void imprimirLista(FichaHosp Paciente[], int tamanho) // IMPRIME OS PACIENTES DA
              << endl;
     }
 }
+
 void buscarNomePaciente(FichaHosp Paciente[], int tamanho, char nomeBuscado[]) // BUSCA NOME DE PACIENTE USANDO "strstr", FUTURAMENTE CRIAREMOS UMA FUNCAO PARA DEIXAR TUDO MINUSCULO ANTES DO strstr
 {
     int j = 0;
@@ -85,10 +87,10 @@ void buscarNomePaciente(FichaHosp Paciente[], int tamanho, char nomeBuscado[]) /
 }
 void buscarIDPaciente(FichaHosp Paciente[], int tamanho, int idBuscado) // BUSCA IDENTIFICADOR SOLICITADO POR BUSCA BINARIA
 {
-    if (idBuscado > 0 and idBuscado < tamanho - 1)
+    if (idBuscado > 0 and idBuscado <= tamanho - 1)
     {
         int esquerda = 0;
-        int direita = tamanho - 1;
+        int direita = tamanho;
         bool encontrou = false;
         while (esquerda <= direita and encontrou == false)
         {
@@ -152,7 +154,7 @@ void salvarBinarioCsv(FichaHosp *&Paciente, int tamanho) // GRAVA OS VETORES EM 
 {
     ofstream arqBin("registroBinarioNovo.bin", ios::binary);
     ofstream arqS("registroNovo.csv");
-    for (int i = 0; i < tamanho; i++)
+    for (int i = 0; i < tamanho - 1; i++)
     {
         arqBin.write((char *)&Paciente[i], sizeof(FichaHosp));
     }
@@ -174,72 +176,174 @@ void salvarBinarioCsv(FichaHosp *&Paciente, int tamanho) // GRAVA OS VETORES EM 
     }
     cout << "Foi criado com a lista atual de Pacientes um novo .csv  e um arquivo binario, nomeados respectivamente: 'registroNovo.csv' 'registroBinarioNovo.bin'." << endl;
 }
-void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente);
-void removerPaciente(FichaHosp Paciente[], int &tamanho, int capacidade)
+void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente);
+void removerPaciente(FichaHosp Paciente[], int &tamanho, int capacidade);
+void pesquisarParte(int tamanho, FichaHosp *Paciente, int capacidade);
+void ordenarLista(int tamanho, FichaHosp *Paciente)
 {
-    int idRemover;
-    cout << "Digite o identificador do Paciente que deseja remover (entre 1 e " << tamanho - 1 << "): ";
-    cin.ignore();
-    cin >> idRemover;
-    if (idRemover > 0 and idRemover < tamanho)
+    int gaps[9] = {1, 4, 10, 23, 57, 132, 301, 701, 1750};
+    int posgap = 8;
+    int escolha;
+    cout << "Deseja ordenar entre:" << endl
+         << "[1] Nome" << endl
+         << "[2] Peso" << endl
+         << "[3] Altura" << endl;
+    cin >> escolha;
+    switch (escolha)
     {
-        cout << endl
-             << "Identificador: " << Paciente[idRemover - 1].identificador << endl
-             << "Nome: " << Paciente[idRemover - 1].nome << endl
-             << "Genero: " << Paciente[idRemover - 1].genero << endl
-             << "Peso: " << Paciente[idRemover - 1].peso << "kg" << endl
-             << "Altura: " << Paciente[idRemover - 1].altura << "m" << endl
-             << "Patologia: " << Paciente[idRemover - 1].patologia << endl;
+    case 1:
+        while (gaps[posgap] >= tamanho - 1)
+        {
+            posgap--;
+        }
+        while (posgap >= 0)
+        {
+            int gap = gaps[posgap];
+            for (int i = gap; i < tamanho - 1; i++)
+            {
+                FichaHosp aux;
+                aux = Paciente[i];
+                int j = i;
 
-        cout << "Deseja remover este paciente?" << endl
-             << "[S/N]" << endl;
-        char SimOuNao;
-        cin >> SimOuNao;
-        if (SimOuNao == 'S' or SimOuNao == 's')
-        {
-            for (int i = idRemover; i < tamanho; i++)
-            {
-                strcpy(Paciente[i - 1].nome, Paciente[i].nome);
-                Paciente[i - 1].genero = Paciente[i].genero;
-                Paciente[i - 1].peso = Paciente[i].peso;
-                Paciente[i - 1].altura = Paciente[i].altura;
-                strcpy(Paciente[i - 1].patologia, Paciente[i].patologia);
+                while (j >= gap and strcmp(Paciente[j - gap].nome, aux.nome) > 0)
+                {
+                    Paciente[j] = Paciente[j - gap];
+                    j = j - gap;
+                }
+                Paciente[j] = aux;
             }
-            tamanho--;
-            for (int i = 0; i < tamanho; i++)
-            {
-                Paciente[i].identificador = i + 1;
-            }
-            cout << "Paciente removido!" << endl;
-            menuPrincipal(capacidade, tamanho, Paciente);
+            posgap--;
         }
-        else if (SimOuNao == 'N' or SimOuNao == 'n')
+        break;
+    case 2:
+        while (gaps[posgap] >= tamanho - 1)
         {
-            cout << "Deseja remover outro Paciente?" << endl
-                 << "[S/N]" << endl;
-            char SairOuNao;
-            cin >> SairOuNao;
-            if (SairOuNao == 'n' or SairOuNao == 'N')
-            {
-                menuPrincipal(capacidade, tamanho, Paciente);
-            }
-            else
-            {
-                removerPaciente(Paciente, tamanho, capacidade);
-            }
+            posgap--;
         }
-    }
-    else
-    {
-        cout << "Digite um numero valido!" << endl;
-        removerPaciente(Paciente, tamanho, capacidade);
+        while (posgap >= 0)
+        {
+            int gap = gaps[posgap];
+            for (int i = gap; i < tamanho - 1; i++)
+            {
+                FichaHosp aux;
+                aux = Paciente[i];
+                int j = i;
+
+                while (j >= gap and Paciente[j - gap].peso > aux.peso)
+                {
+                    Paciente[j] = Paciente[j - gap];
+                    j = j - gap;
+                }
+                Paciente[j] = aux;
+            }
+            posgap--;
+        }
+        break;
+    case 3:
+        while (gaps[posgap] >= tamanho - 1)
+        {
+            posgap--;
+        }
+        while (posgap >= 0)
+        {
+            int gap = gaps[posgap];
+            for (int i = gap; i < tamanho - 1; i++)
+            {
+                FichaHosp aux;
+                aux = Paciente[i];
+                int j = i;
+
+                while (j >= gap and Paciente[j - gap].altura > aux.altura)
+                {
+                    Paciente[j] = Paciente[j - gap];
+                    j = j - gap;
+                }
+                Paciente[j] = aux;
+            }
+            posgap--;
+        }
+    default:
+        break;
     }
 }
-void pesquisarParte(int tamanho, FichaHosp *Paciente, int capacidade)
+void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente) // MENU DE ESCOLHA QUE É APRESENTADO AS FUNCIONALIDADES DO CODIGO, CHAMA A FUNÇAO "menu1ou0" APOS O 'CASE' FINALIZAR
+{
+    int escolha;
+    cout << "ESCOLHA O QUE DESEJA FAZER:" << endl
+         << "[1] IMPRIMIR FICHA DOS PACIENTES" << endl
+         << "[2] PESQUISAR NOME DE PACIENTE" << endl
+         << "[3] BUSCAR POR IDENTIFICADOR DO PACIENTE" << endl
+         << "[4] ADICIONAR PACIENTE" << endl
+         << "[5] SALVAR LISTA ATUAL EM BINARIO E CSV" << endl
+         << "[6] REMOVER PACIENTE" << endl
+         << "[7] PESQUISAR DENTRO DE UMA FAIXA DE INFORMACAO" << endl
+         << "[8] ORDENAR A LISTA DE OUTRA MANEIRA" << endl
+         << "[0] FECHAR O PROGRAMA" << endl;
+    cin >> escolha;
+    switch (escolha)
+    {
+    case 1:
+        imprimirLista(Paciente, tamanho);
+        menu1ou0(capacidade, tamanho, Paciente);
+        break;
+    case 2:
+        char nomeBuscado[30];
+        cout << "Digite o nome que deseja pesquisar: ";
+        cin >> nomeBuscado;
+        buscarNomePaciente(Paciente, capacidade, nomeBuscado);
+        menu1ou0(capacidade, tamanho, Paciente);
+        break;
+    case 3:
+        int idBuscado;
+        cout << "Digite o numero de identificacao: ";
+        cin >> idBuscado;
+        buscarIDPaciente(Paciente, capacidade, idBuscado);
+        menu1ou0(capacidade, tamanho, Paciente);
+        break;
+    case 4:
+        addPaciente(Paciente, capacidade, tamanho);
+        menu1ou0(capacidade, tamanho, Paciente);
+        break;
+    case 5:
+        salvarBinarioCsv(Paciente, tamanho);
+        menu1ou0(capacidade, tamanho, Paciente);
+        break;
+    case 6:
+        removerPaciente(Paciente, tamanho, capacidade);
+        break;
+    case 7:
+        pesquisarParte(tamanho, Paciente, capacidade);
+        break;
+    case 8:
+        ordenarLista(tamanho, Paciente);
+        menu1ou0(capacidade, tamanho, Paciente);
+        break;
+    default:
+        break;
+    }
+}
+void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente) // ESSA FUNÇAO RETORNA O USUARIO AO MENU PRINCIPAL OU FINALIZA O PROGRAMA
+{
+    int escolha;
+    cout << "ESCOLHA O QUE DESEJA FAZER:" << endl
+         << "[1] VOLTAR PARA O MENU PRINCIPAL" << endl
+         << "[0] FECHAR PROGRAMA" << endl;
+    cin >> escolha;
+    switch (escolha)
+    {
+    case 1:
+        menuPrincipal(capacidade, tamanho, Paciente);
+        break;
+
+    case 0:
+        break;
+    }
+}
+void pesquisarParte(int tamanho, FichaHosp *Paciente, int capacidade) // FUNCAO QUE BUSCA DENTRO DE UMA FAIXA NUMEROS QUE O USUARIO DESEJA
 {
     int escolha;
     cout << "Deseja pesquisar entre:" << endl
-         << "[1] Identificador" << endl
+         << "[1] Posicao no vetor" << endl
          << "[2] Peso" << endl
          << "[3] Altura" << endl;
     cin >> escolha;
@@ -315,7 +419,8 @@ void pesquisarParte(int tamanho, FichaHosp *Paciente, int capacidade)
         cin >> escolha2;
         switch (escolha2)
         {
-        case 1:{
+        case 1:
+        {
             pesquisarParte(tamanho, Paciente, capacidade);
             break;
         }
@@ -359,7 +464,8 @@ void pesquisarParte(int tamanho, FichaHosp *Paciente, int capacidade)
         cin >> escolha3;
         switch (escolha3)
         {
-        case 1:{
+        case 1:
+        {
             pesquisarParte(tamanho, Paciente, capacidade);
             break;
         }
@@ -372,102 +478,134 @@ void pesquisarParte(int tamanho, FichaHosp *Paciente, int capacidade)
     break;
     }
 }
-void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente);
-void menuPrincipal(int capacidade, int tamanho, FichaHosp *Paciente) // MENU DE ESCOLHA QUE É APRESENTADO AS FUNCIONALIDADES DO CODIGO, CHAMA A FUNÇAO "menu1ou0" APOS O 'CASE' FINALIZAR
+void removerPaciente(FichaHosp Paciente[], int &tamanho, int capacidade) // FUNÇAO DE REMOVER PACIENTE
 {
-    int escolha;
-    cout << "Escolha o que deseja fazer:" << endl
-         << "[1] Imprimir ficha dos pacientes" << endl
-         << "[2] Pesquisar nome de pacientes" << endl
-         << "[3] Buscar por identificador de paciente" << endl
-         << "[4] Adicionar paciente" << endl
-         << "[5] Salvar lista atual em binario e csv" << endl
-         << "[6] Remover paciente" << endl
-         << "[7] Pesquisar dentro de uma faixa de informacão" << endl
-         << "[0] Fechar o programa" << endl;
-    cin >> escolha;
-    switch (escolha)
+    int idRemover;
+    cout << "Digite o identificador do Paciente que deseja remover (entre 1 e " << tamanho - 1 << "): ";
+    cin.ignore();
+    cin >> idRemover;
+    if (idRemover > 0 and idRemover < tamanho)
     {
-    case 1:
-        imprimirLista(Paciente, tamanho);
-        menu1ou0(capacidade, tamanho, Paciente);
-        break;
-    case 2:
-        char nomeBuscado[30];
-        cout << "Digite o nome que deseja pesquisar: ";
-        cin >> nomeBuscado;
-        buscarNomePaciente(Paciente, capacidade, nomeBuscado);
-        menu1ou0(capacidade, tamanho, Paciente);
-        break;
-    case 3:
-        int idBuscado;
-        cout << "Digite o numero de identificacao (entre 1 e " << tamanho - 1 << ") : ";
-        cin >> idBuscado;
-        buscarIDPaciente(Paciente, capacidade, idBuscado);
-        menu1ou0(capacidade, tamanho, Paciente);
-        break;
-    case 4:
-        addPaciente(Paciente, capacidade, tamanho);
-        break;
-    case 5:
-        salvarBinarioCsv(Paciente, tamanho);
-        menu1ou0(capacidade, tamanho, Paciente);
-        break;
-    case 6:
+        cout << endl
+             << "Identificador: " << Paciente[idRemover - 1].identificador << endl
+             << "Nome: " << Paciente[idRemover - 1].nome << endl
+             << "Genero: " << Paciente[idRemover - 1].genero << endl
+             << "Peso: " << Paciente[idRemover - 1].peso << "kg" << endl
+             << "Altura: " << Paciente[idRemover - 1].altura << "m" << endl
+             << "Patologia: " << Paciente[idRemover - 1].patologia << endl;
+
+        cout << "Deseja remover este paciente?" << endl
+             << "[S/N]" << endl;
+        char SimOuNao;
+        cin >> SimOuNao;
+        if (SimOuNao == 'S' or SimOuNao == 's')
+        {
+            for (int i = idRemover; i < tamanho; i++)
+            {
+                strcpy(Paciente[i - 1].nome, Paciente[i].nome);
+                Paciente[i - 1].genero = Paciente[i].genero;
+                Paciente[i - 1].peso = Paciente[i].peso;
+                Paciente[i - 1].altura = Paciente[i].altura;
+                strcpy(Paciente[i - 1].patologia, Paciente[i].patologia);
+            }
+            tamanho--;
+            for (int i = 0; i < tamanho; i++)
+            {
+                Paciente[i].identificador = i + 1;
+            }
+            cout << "Paciente removido!" << endl;
+            menu1ou0(capacidade, tamanho, Paciente);
+        }
+        else if (SimOuNao == 'N' or SimOuNao == 'n')
+        {
+            cout << "Deseja remover outro Paciente?" << endl
+                 << "[S/N]" << endl;
+            char SairOuNao;
+            cin >> SairOuNao;
+            if (SairOuNao == 'n' or SairOuNao == 'N')
+            {
+                menu1ou0(capacidade, tamanho, Paciente);
+            }
+            else
+            {
+                removerPaciente(Paciente, tamanho, capacidade);
+            }
+        }
+    }
+    else
+    {
+        cout << "Digite um numero valido!" << endl;
         removerPaciente(Paciente, tamanho, capacidade);
-        break;
-    case 7:
-        pesquisarParte(tamanho, Paciente, capacidade);
-        break;
-    default:
-        break;
     }
 }
-void menu1ou0(int capacidade, int tamanho, FichaHosp *Paciente) // ESSA FUNÇAO RETORNA O USUARIO AO MENU PRINCIPAL OU FINALIZA O PROGRAMA
-{
-    int escolha;
-    cout << "ESCOLHA O QUE DESEJA FAZER:" << endl
-         << "[1] VOLTAR PARA O MENU PRINCIPAL" << endl
-         << "[0] FECHAR PROGRAMA" << endl;
-    cin >> escolha;
-    switch (escolha)
-    {
-    case 1:
-        menuPrincipal(capacidade, tamanho, Paciente);
-        break;
-
-    case 0:
-        break;
-    }
-}
-
 int main()
 {
     cout << fixed;
     cout << setprecision(2);
 
+    ifstream arqEnt("registro.csv");
     int capacidade = 75;
     int tamanho = 0;
 
     FichaHosp *Paciente = new FichaHosp[capacidade];
+    int escolhaAbertura;
+    cout << "Deseja abrir como:" << endl
+         << "[1] Binario (registroBinario.bin)" << endl
+         << "[2] CSV (registro.csv)" << endl;
+    cin >> escolhaAbertura;
 
-    ifstream arquivoBinario("registroBinario.bin", ios::binary);
-
-    if (!arquivoBinario.is_open())
+    if (escolhaAbertura == 1)
     {
-        cout << "Erro ao abrir o arquivo binário." << std::endl;
-        return 1;
-    }
-    while (arquivoBinario)
-    { // LEITURA DO ARQUIVO BINARIO, REDIMENSIONAMENTO SE NECESSARIO E ATRIBUICAO NA MEMORIA
-        if (tamanho + 1 == capacidade)
+
+        ifstream arquivoBinario("registroBinario.bin", ios::binary);
+
+        if (!arquivoBinario.is_open())
         {
-            aumentarCapacidade(Paciente, capacidade, tamanho);
+            cout << "Erro ao abrir o arquivo binário." << std::endl;
+            return 1;
         }
-        tamanho < capacidade and arquivoBinario.read(reinterpret_cast<char *>(&Paciente[tamanho]), sizeof(FichaHosp));
-        tamanho++;
+        while (arquivoBinario)
+        { // LEITURA DO ARQUIVO BINARIO, REDIMENSIONAMENTO SE NECESSARIO E ATRIBUICAO NA MEMORIA
+            if (tamanho + 1 == capacidade)
+            {
+                aumentarCapacidade(Paciente, capacidade, tamanho);
+            }
+            tamanho < capacidade and arquivoBinario.read(reinterpret_cast<char *>(&Paciente[tamanho]), sizeof(FichaHosp));
+            tamanho++;
+        }
+
+        menuPrincipal(capacidade, tamanho, Paciente);
     }
 
-    menuPrincipal(capacidade, tamanho, Paciente);
+    else
+    {
+        ifstream arqCSV("registro.csv");
+        char lixo;
+
+        while (arqCSV)
+        {
+            if (tamanho == capacidade)
+            {
+                aumentarCapacidade(Paciente, capacidade, tamanho);
+            }
+
+            arqCSV >> Paciente[tamanho].identificador;
+            arqCSV >> lixo;
+            arqCSV.get(Paciente[tamanho].nome, 30, ',');
+            arqCSV >> lixo;
+            arqCSV >> Paciente[tamanho].genero;
+            arqCSV >> lixo;
+            arqCSV >> Paciente[tamanho].peso;
+            arqCSV >> lixo;
+            arqCSV >> Paciente[tamanho].altura;
+            arqCSV >> lixo;
+            arqCSV.get(Paciente[tamanho].patologia, 30, ',');
+            arqCSV >> lixo;
+
+            tamanho++;
+        }
+        menuPrincipal(capacidade, tamanho, Paciente);
+    }
+
     return 0;
 }
