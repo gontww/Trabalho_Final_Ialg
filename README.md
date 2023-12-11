@@ -16,4 +16,4 @@ Finalização do Curso: 14/12/2023
 Inicio do Trabalho Final: 26/10/2023
 Finalização do Trabalho Final: 10/12/2023
 
-Para utilizar o codigo você deve baixar um dos arquivos que contêm a Ficha dos Pacientes, e deixa-lô junto com o executável do [Codigo.cpp](Codigo.cpp) e executar o codigo em um compilador C++.
+Para utilizar o codigo você deve baixar um dos arquivos que contêm a Ficha dos Pacientes, [arquivo .csv](registro.csv) ou [arquivo .bin](registroBinario.bin), e deixa-lô junto com o executável do [Codigo.cpp](Codigo.cpp) e executar o codigo em um compilador C++.
