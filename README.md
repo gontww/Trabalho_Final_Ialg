@@ -1,9 +1,9 @@
 # Trabalho_Final_Ialg
 Trabalho Final de Introdução aos Algoritmos em C++
 
-TEMA: FICHAS HOSPITALARES
+Tema: Fichas Hospitalares
 
-INTEGRANTES: 
+Integrantes: 
 
 AUGUSTO ANTÔNIO COSTA GONTIJO - JOÃO MARCUS LEITE DA SILVA - CARLOS EDUARDO BORGES DE SOUSA
 
